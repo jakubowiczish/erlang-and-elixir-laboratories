@@ -1,15 +1,6 @@
-%%%-------------------------------------------------------------------
-%%% @author radoj
-%%% @copyright (C) 2019, <COMPANY>
-%%% @doc
-%%%
-%%% @end
-%%% Created : 06. Mar 2019 13:00
-%%%-------------------------------------------------------------------
 -module(reversePolishNotationCalculator).
 -author("jakub").
 
-%% API
 -export([rpn/1]).
 -export([calculate/2]).
 -export([filter_expression/1]).
