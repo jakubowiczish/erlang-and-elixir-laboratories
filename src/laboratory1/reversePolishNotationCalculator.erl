@@ -5,6 +5,11 @@
 -export([calculate/2]).
 -export([filter_expression/1]).
 
+%%% 1 + 2 * 3 - 4 / 5 + 6 in rpn: "1 2 3 * 4 5 / - 6 + +"
+%%% 1 + 2 + 3 + 4 + 5 + 6 * 7 in rpn: "1 2 + 3 + 4 + 5 + 6 7 * +"
+%%% ((4 + 7) / 3) * (2 - 19) in rpn: "4 7 + 3 / 2 19 - *"
+%%% 17 * (31 + 4) / ( (26 - 15) * 2 - 22 ) - 1 in rpn: "17 31 4 + * 26 15 - 2 * 22 - / 1 - *"
+
 rpn(Expression) ->
   calculate(filter_expression(string:tokens(Expression, " ")), []).
 
@@ -57,4 +62,19 @@ filter_expression(["ctan" | T]) ->
 filter_expression(["sqrt" | T]) ->
   ["sqrt" | filter_expression(T)];
 filter_expression([H | T]) ->
-  [list_to_integer(H) | filter_expression(T)].
+  case string:to_float(H) of
+    {error, no_float} ->
+      case string:to_integer(H) of
+        {error, no_integer} -> exit("Argument is neither int nor float");
+        {Int, Rest} ->
+          if
+            length(Rest) == 0 -> [Int | filter_expression(T)];
+            true -> exit("Ivalid argument!")
+          end
+      end;
+    {Float, Rest} ->
+      if
+        length(Rest) == 0 -> [Float | filter_expression(T)];
+        true -> exit("Invalid argument!")
+      end
+  end.
