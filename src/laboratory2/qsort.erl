@@ -31,3 +31,4 @@ compareSpeeds(List, Fun1, Fun2) ->
   {Time1, _} = timer:tc(qsort, Fun1, [List]),
   {Time2, _} = timer:tc(lists, Fun2, [List]),
   io:fwrite("Time of sorting using qsort:qs: ~f seconds,~nTime of sorting using lists:sort: ~f seconds ~n", [Time1 / 1000000, Time2 / 1000000]).
+
