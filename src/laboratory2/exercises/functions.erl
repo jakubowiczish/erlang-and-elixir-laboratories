@@ -11,3 +11,10 @@ map(Fun, List) ->
   [Fun(X) || X <- List].
 
 %%sum_of_digits(Number) ->
+
+
+%%Process1 = spawn(fun() ->
+%%receive
+%%_ -> io:format("Message received!~n")
+%%end
+%%end).
