@@ -15,7 +15,7 @@ createMonitor() ->
 addStation(Name, {Latitude, Longitude}, Monitor)
   when is_record(Monitor, monitor) and is_number(Latitude) and is_number(Longitude) ->
   case (maps:is_key(Name, Monitor#monitor.stationsMap) or maps:is_key({Latitude, Longitude}, Monitor#monitor.stationsMap)) of
-    true -> stationAlreadyExistsError;
+    true -> io:format("Station already exists in the system!~n");
     false ->
       Station = #station{name = Name, coordinates = {Latitude, Longitude}},
       StationsMap = Monitor#monitor.stationsMap,
