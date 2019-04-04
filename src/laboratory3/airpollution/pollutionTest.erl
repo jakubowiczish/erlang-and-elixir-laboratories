@@ -23,7 +23,6 @@ test_pollution_module() ->
   Monitor3 = pollution:addStation("WallStreet", {100, 121}, Monitor2),
   io:format("Actual state of monitor: ~p~n~n", [Monitor3]),
 
-
   io:format("Adding new value for Broadway: 4-03-2019, PM2.5, 20, ~n"),
   Monitor4 = pollution:addValue("Broadway", "4-03-2019", "PM2.5", 20, Monitor3),
   io:format("Actual state of monitor: ~p~n~n", [Monitor4]),
