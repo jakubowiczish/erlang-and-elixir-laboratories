@@ -30,7 +30,7 @@ addStation(_, _, _)
 
 
 
-addValue(_, _, _, _, #{}) -> error_logger:error_msg("Empty monitor!");
+addValue(_, _, _, _, #{}) -> error_logger:error_msg("The monitor is empty!");
 addValue(StationKey, Date, Type, Value, Monitor) ->
   StationsMap = Monitor#monitor.stationsMap,
   MeasurementsMap = Monitor#monitor.measurementsMap,
@@ -47,10 +47,10 @@ addValue(StationKey, Date, Type, Value, Monitor) ->
             }
           end
       catch
-        error ->
+        error:_ ->
           #monitor{stationsMap = StationsMap, measurementsMap = maps:put(Station, [Measurement], MeasurementsMap)}
       end
   catch
-    error -> error_logger:error_msg("There is no such station in the system! Try again~n")
+    error:_ -> error_logger:error_msg("There is no such station in the system! Try again~n")
   end.
 
