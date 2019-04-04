@@ -3,15 +3,17 @@
 
 %% API
 -export([]).
--export([createMonitor/0, addStation/3, addValue/5]).
+-export([createMonitor/0, addStation/3, addValue/5, removeValue/4, contains/2]).
 
 -record(station, {name, coordinates}).
 -record(measurement, {date = calendar:local_time(), type, value = 0}).
 -record(monitor, {stationsMap = #{}, measurementsMap = #{}}).
 
 
+
 createMonitor() ->
   #monitor{}.
+
 
 
 addStation(Name, {Latitude, Longitude}, Monitor)
@@ -53,4 +55,36 @@ addValue(StationKey, Date, Type, Value, Monitor) ->
   catch
     error:_ -> error_logger:error_msg("There is no such station in the system! Try again~n")
   end.
+
+
+
+removeValue(StationKey, Date, Type, Monitor) ->
+  StationsMap = Monitor#monitor.stationsMap,
+  MeasurementsMap = Monitor#monitor.measurementsMap,
+  try maps:get(StationKey, StationsMap) of
+    Station ->
+      try maps:get(Station, MeasurementsMap) of
+        MeasurementsList ->
+          Measurement = #measurement{date = Date, type = Type},
+          case contains(Measurement, MeasurementsList) of
+            {true, _, NewMeasurementsList} ->
+              #monitor{stationsMap = StationsMap, measurementsMap = MeasurementsMap#{Station := NewMeasurementsList}};
+            false -> error_logger:error_msg("There is no such measurement")
+          end
+      catch
+        error:_ -> error_logger:error_msg("There is no such measurement")
+      end
+  catch
+    error:_ -> error_logger:error_msg("There is no such station")
+  end.
+
+
+
+contains(_, []) -> false;
+contains(Measurement, [Head | Tail]) ->
+  case ((Head#measurement.type == Measurement#measurement.type) and (Head#measurement.date == Measurement#measurement.date)) of
+    true -> {true, Head, Tail};
+    false -> contains(Measurement, Tail)
+  end.
+
 

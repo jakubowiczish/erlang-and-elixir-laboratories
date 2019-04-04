@@ -5,6 +5,7 @@
 -export([]).
 -export([test_pollution_module/0, test_errors_detecting/0]).
 
+
 test_pollution_module() ->
   io:format("Creating empty monitor:~n"),
   Monitor = pollution:createMonitor(),
@@ -29,7 +30,12 @@ test_pollution_module() ->
 
   io:format("Adding new value for Carpentersville: 5-03-2019, SO2, 40, ~n"),
   Monitor5 = pollution:addValue("Carpentersville", "5-03-2019", "SO2", 40, Monitor4),
-  io:format("Actual state of monitor: ~p~n~n", [Monitor5]).
+  io:format("Actual state of monitor: ~p~n~n", [Monitor5]),
+
+  io:format("Removing value from Carpentersville 5-03-2019, S02~n"),
+  Monitor6 = pollution:removeValue("Carpentersville", "5-03-2019", "SO2", Monitor5),
+  io:format("Actual state of monitor: ~p~n~n", [Monitor6]).
+
 
 
 test_errors_detecting() ->
