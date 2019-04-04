@@ -45,7 +45,15 @@ test_pollution_module() ->
 
   io:format("Getting average value of SO2 for Carpentersville:~n"),
   Mean1 = pollution:getStationMean("Carpentersville", "SO2", Monitor8),
-  io:format("Mean value for SO2, Carpentersville ~p~n~n", [Mean1]).
+  io:format("Average value for SO2, Carpentersville ~p~n~n", [Mean1]),
+
+  io:format("Adding new value for WallStreet: 5-03-2019, SO2, 16, ~n"),
+  Monitor9 = pollution:addValue("WallStreet", "5-03-2019", "SO2", 16, Monitor8),
+  io:format("Actual state of monitor: ~p~n~n", [Monitor9]),
+
+  io:format("Getting average value of SO2 for all stations for 5-03-2019 ~n"),
+  DailyMean1 = pollution:getDailyMean("5-03-2019", "SO2", Monitor9),
+  io:format("Daily average value for SO2 on 5-03-2019: ~p~n~n", [DailyMean1]).
 
 
 test_errors_detecting() ->

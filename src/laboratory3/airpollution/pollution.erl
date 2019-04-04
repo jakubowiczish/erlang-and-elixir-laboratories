@@ -112,7 +112,7 @@ getStationMean(StationKey, Type, Monitor) ->
 
 
 getDailyMean(Date, Type, Monitor) ->
-  ListOfValues = maps:values(Monitor#monitor.measurementsMap),
+  ListOfValues = lists:flatten(maps:values(Monitor#monitor.measurementsMap)),
   countMean(lists:filter(fun(X) -> (X#measurement.type == Type) and (X#measurement.date == Date) end, ListOfValues)).
 
 
