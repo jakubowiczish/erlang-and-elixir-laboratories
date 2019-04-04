@@ -3,7 +3,7 @@
 
 %% API
 -export([]).
--export([createMonitor/0, addStation/3, addValue/5, removeValue/4, contains/2, getOneValue/4]).
+-export([createMonitor/0, addStation/3, addValue/5, removeValue/4, contains/2, getOneValue/4, getStationMean/3, countMean/1, getDailyMean/3]).
 
 -record(station, {name, coordinates}).
 -record(measurement, {date = calendar:local_time(), type, value = 0}).
@@ -12,6 +12,7 @@
 
 createMonitor() ->
   #monitor{}.
+
 
 addStation(Name, {Latitude, Longitude}, Monitor)
   when is_record(Monitor, monitor) and is_number(Latitude) and is_number(Longitude) ->
@@ -26,7 +27,6 @@ addStation(Name, {Latitude, Longitude}, Monitor)
   end;
 addStation(_, _, _)
   -> error_logger:error_msg("Bad arguments! Try again").
-
 
 
 addValue(_, _, _, _, #{}) -> error_logger:error_msg("The monitor is empty!");
@@ -54,7 +54,6 @@ addValue(StationKey, Date, Type, Value, Monitor) ->
   end.
 
 
-
 removeValue(StationKey, Date, Type, Monitor) ->
   StationsMap = Monitor#monitor.stationsMap,
   MeasurementsMap = Monitor#monitor.measurementsMap,
@@ -72,9 +71,8 @@ removeValue(StationKey, Date, Type, Monitor) ->
         error:_ -> error_logger:error_msg("There is no such measurement")
       end
   catch
-    error:_ -> error_logger:error_msg("There is no such station")
+    error:_ -> error_logger:error_msg("There is no such station!")
   end.
-
 
 
 getOneValue(StationKey, Date, Type, Monitor) ->
@@ -93,8 +91,39 @@ getOneValue(StationKey, Date, Type, Monitor) ->
         error:_ -> error_logger:error_msg("There is no such measurement")
       end
   catch
-    error:_ -> error_logger:error_msg("There is no such station")
+    error:_ -> error_logger:error_msg("There is no such station!")
   end.
+
+
+getStationMean(_, _, {#{}, #{}}) -> error_logger:error_msg("This monitor is empty!");
+getStationMean(StationKey, Type, Monitor) ->
+  StationsMap = Monitor#monitor.stationsMap,
+  MeasurementsMap = Monitor#monitor.measurementsMap,
+  try maps:get(StationKey, StationsMap) of
+    Station ->
+      try maps:get(Station, MeasurementsMap) of
+        MeasurementsList -> countMean(lists:filter(fun(X) -> X#measurement.type == Type end, MeasurementsList))
+      catch
+        error:_ -> 0
+      end
+  catch
+    error:_ -> error_logger:error_msg("There is no such station!")
+  end.
+
+
+getDailyMean(Date, Type, Monitor) ->
+  ListOfValues = maps:values(Monitor#monitor.measurementsMap),
+  countMean(lists:filter(fun(X) -> (X#measurement.type == Type) and (X#measurement.date == Date) end, ListOfValues)).
+
+
+countMean([]) -> 0;
+countMean(List) ->
+  countSumOfValues(List) / length(List).
+
+
+countSumOfValues([]) -> 0;
+countSumOfValues([H | T]) ->
+  H#measurement.value + countSumOfValues(T).
 
 
 contains(_, []) -> false;
@@ -103,4 +132,3 @@ contains(Measurement, [Head | Tail]) ->
     true -> {true, Head, Tail};
     false -> contains(Measurement, Tail)
   end.
-

@@ -33,8 +33,19 @@ test_pollution_module() ->
 
   io:format("Removing value from Carpentersville 5-03-2019, S02~n"),
   Monitor6 = pollution:removeValue("Carpentersville", "5-03-2019", "SO2", Monitor5),
-  io:format("Actual state of monitor: ~p~n~n", [Monitor6]).
+  io:format("Actual state of monitor: ~p~n~n", [Monitor6]),
 
+  io:format("Adding new value for Carpentersville: 5-03-2019, SO2, 40, ~n"),
+  Monitor7 = pollution:addValue("Carpentersville", "5-03-2019", "SO2", 40, Monitor6),
+  io:format("Actual state of monitor: ~p~n~n", [Monitor7]),
+
+  io:format("Adding new value for Carpentersville: 6-03-2019, SO2, 60, ~n"),
+  Monitor8 = pollution:addValue("Carpentersville", "6-03-2019", "SO2", 60, Monitor7),
+  io:format("Actual state of monitor: ~p~n~n", [Monitor8]),
+
+  io:format("Getting average value of SO2 for Carpentersville:~n"),
+  Mean1 = pollution:getStationMean("Carpentersville", "SO2", Monitor8),
+  io:format("Mean value for SO2, Carpentersville ~p~n~n", [Mean1]).
 
 
 test_errors_detecting() ->
