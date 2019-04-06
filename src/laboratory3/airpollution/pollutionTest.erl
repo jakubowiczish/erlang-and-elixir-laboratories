@@ -53,7 +53,12 @@ test_pollution_module() ->
 
   io:format("Getting average value of SO2 for all stations for 5-03-2019 ~n"),
   DailyMean1 = pollution:getDailyMean("5-03-2019", "SO2", Monitor9),
-  io:format("Daily average value for SO2 on 5-03-2019: ~p~n~n", [DailyMean1]).
+  io:format("Daily average value for SO2 on 5-03-2019: ~p~n~n", [DailyMean1]),
+
+  io:format("Getting some data from csv file:~n"),
+  Monitor10 = pollution:importFromCsv("/home/jakub/IdeaProjects/ErlangLaboratories/src/laboratory3/airpollution/data.csv", Monitor9),
+  io:format("Actual state of monitor after parsing from csv file: ~p~n", [Monitor10]).
+
 
 
 test_errors_detecting() ->
