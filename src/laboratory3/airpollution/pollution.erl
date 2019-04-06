@@ -3,7 +3,7 @@
 
 %% API
 -export([]).
--export([createMonitor/0, addStation/3, addValue/5, removeValue/4, contains/2, getOneValue/4, getStationMean/3, countMean/1, getDailyMean/3]).
+-export([createMonitor/0, addStation/3, addValue/5, removeValue/4, contains/2, getOneValue/4, getStationMean/3, countMean/1, getDailyMean/3, readLines/1, importFromCsv/1, get_all_lines/1]).
 
 -record(station, {name, coordinates}).
 -record(measurement, {date = calendar:local_time(), type, value = 0}).
@@ -23,7 +23,7 @@ addStation(Name, {Latitude, Longitude}, Monitor)
       Station = #station{name = Name, coordinates = {Latitude, Longitude}},
       StationsMap = Monitor#monitor.stationsMap,
       MeasurementsMap = Monitor#monitor.measurementsMap,
-      #monitor{stationsMap = maps:put(Name, Station, StationsMap), measurementsMap = MeasurementsMap}
+      #monitor{stationsMap = StationsMap#{Name => Station, {Latitude, Longitude} => Station}, measurementsMap = MeasurementsMap}
   end;
 addStation(_, _, _)
   -> error_logger:error_msg("Bad arguments! Try again").
@@ -131,4 +131,24 @@ contains(Measurement, [Head | Tail]) ->
   case ((Head#measurement.type == Measurement#measurement.type) and (Head#measurement.date == Measurement#measurement.date)) of
     true -> {true, Head, Tail};
     false -> contains(Measurement, Tail)
+  end.
+
+importFromCsv(FileName) ->
+  Lines = readLines(FileName),
+  Monitor = #monitor{stationsMap = #{}, measurementsMap = #{}},
+  [Name, Coordinates, Date, Type, Value] = string:lexemes(Lines, ";"),
+  Station = #station{name = Name, coordinates = Coordinates},
+  Station.
+
+
+readLines(FileName) ->
+  {ok, Data} = file:open(FileName, [read]),
+  try get_all_lines(Data)
+  after file:close(Data)
+  end.
+
+get_all_lines(Data) ->
+  case io:get_line(Data, "") of
+    eof -> [];
+    Line -> Line ++ get_all_lines(Data)
   end.

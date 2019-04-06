@@ -77,5 +77,9 @@ test_errors_detecting() ->
   io:format("Actual state of monitor: ~p~n", [Monitor5]),
 
   io:format("Trying to ADD EMPTY STATION:~n"),
-  Monitor6 = pollution:addStation([], [], []).
+  Monitor6 = pollution:addStation([], [], []),
+
+  io:format("Adding new station: Chicago, {100,200} ~n"),
+  Monitor7 = pollution:addStation("Chicago", {100, 200}, Monitor6),
+  io:format("Actual state of monitor: ~p~n~n", [Monitor7]).
 
