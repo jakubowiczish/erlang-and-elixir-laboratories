@@ -13,7 +13,7 @@
 createMonitor() ->
   #monitor{}.
 
-
+%% @doc adds new station to the system - returns updated monitor
 addStation(Name, {Latitude, Longitude}, Monitor)
   when is_record(Monitor, monitor) and is_number(Latitude) and is_number(Longitude) ->
   case (maps:is_key(Name, Monitor#monitor.stationsMap) or maps:is_key({Latitude, Longitude}, Monitor#monitor.stationsMap)) of
@@ -30,7 +30,7 @@ addStation(Name, {Latitude, Longitude}, Monitor)
 addStation(_, _, _)
   -> error_logger:error_msg("Bad arguments in addStation method! Try again").
 
-
+%% @doc adds new value to the system - returns updated monitor
 addValue(_, _, _, _, #{}) -> error_logger:error_msg("The monitor is empty!");
 addValue(StationKey, Date, Type, Value, Monitor) ->
   StationsMap = Monitor#monitor.stationsMap,
