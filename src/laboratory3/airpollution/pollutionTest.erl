@@ -3,10 +3,56 @@
 
 %% API
 -export([]).
--export([test_pollution_module/0, test_errors_detecting/0]).
+-export([testWholePollutionModule/0, testErrorDetecting/0, testCreateMonitorMethod/0, testAddStationMethod/0, testAddValueMethod/0]).
 
 
-test_pollution_module() ->
+testCreateMonitorMethod() ->
+  io:format("TESTING CREATE MONITOR METHOD:~n"),
+  EmptyMonitor = pollution:createMonitor(),
+  io:format("Created monitor: ~p~n", [EmptyMonitor]).
+
+testAddStationMethod() ->
+  io:format("TESTING ADD STATION METHOD:~n"),
+  EmptyMonitor = pollution:createMonitor(),
+  io:format("Created monitor: ~p~n", [EmptyMonitor]),
+
+  io:format("Adding new station: Broadway, {100, 200} to this empty monitor~n"),
+  BroadwayMonitor = pollution:addStation("Broadway", {100, 200}, EmptyMonitor),
+  io:format("Actual state of monitor: ~p~n~n", [BroadwayMonitor]),
+
+  io:format("Adding station WITH THE SAME NAME AS ONE OF EXISTING STATIONS:
+  Broadway, {101, 201}~n"),
+  BroadwayMonitor2 = pollution:addStation("Broadway", {101, 201}, BroadwayMonitor),
+  io:format("Actual state of monitor: ~p~n~n", [BroadwayMonitor2]),
+
+  io:format("Adding station WITH THE SAME COORDINATES AS ONE OF EXISTING STATIONS:
+  LosAngeles, {100, 200}~n"),
+  LosAngelesMonitor = pollution:addStation("LosAngeles", {100, 200}, BroadwayMonitor2),
+  io:format("Actual state of monitor: ~p~n~n", [LosAngelesMonitor]).
+
+
+testAddValueMethod() ->
+  io:format("TESTING ADD STATION METHOD:~n"),
+  EmptyMonitor = pollution:createMonitor(),
+  io:format("Created monitor: ~p~n", [EmptyMonitor]),
+
+  io:format("Adding new station: Broadway, {100, 200} to this empty monitor~n"),
+  BroadwayMonitor = pollution:addStation("Broadway", {100, 200}, EmptyMonitor),
+  io:format("Actual state of monitor: ~p~n~n", [BroadwayMonitor]),
+
+  io:format("Adding new value for station: Broadway, {100, 200} ~n"),
+  ValueMonitor1 = pollution:addValue("Broadway", "7-04-2019", "PM10", 16, BroadwayMonitor),
+  io:format("Actual state of monitor: ~p~n~n", [ValueMonitor1]),
+
+  io:format("Adding new value for station: Broadway, {100, 200} ~n"),
+  ValueMonitor2 = pollution:addValue({100, 200}, "7-04-2019", "PM10", 32, ValueMonitor1),
+  io:format("Actual state of monitor: ~p~n~n", [ValueMonitor2]).
+
+
+
+
+
+testWholePollutionModule() ->
   io:format("Creating empty monitor:~n"),
   Monitor = pollution:createMonitor(),
   io:format("Created monitor: ~p~n", [Monitor]),
@@ -51,9 +97,9 @@ test_pollution_module() ->
   Monitor9 = pollution:addValue("WallStreet", "5-03-2019", "SO2", 16, Monitor8),
   io:format("Actual state of monitor: ~p~n~n", [Monitor9]),
 
-  io:format("Getting average value of SO2 for all stations for 5-03-2019 ~n"),
+  io:format("Getting AVERAGE VALUE of SO2 for all stations for 5-03-2019 ~n"),
   DailyMean1 = pollution:getDailyMean("5-03-2019", "SO2", Monitor9),
-  io:format("Daily average value for SO2 on 5-03-2019: ~p~n~n", [DailyMean1]),
+  io:format("DAILY AVERAGE VALUE for SO2 on 5-03-2019: ~p~n~n", [DailyMean1]),
 
   io:format("Getting some data from csv file:~n"),
   Monitor10 = pollution:importFromCsv("/home/jakub/IdeaProjects/ErlangLaboratories/src/laboratory3/airpollution/data.csv", Monitor9),
@@ -61,7 +107,7 @@ test_pollution_module() ->
 
 
 
-test_errors_detecting() ->
+testErrorDetecting() ->
   io:format("Creating empty monitor:~n"),
   Monitor = pollution:createMonitor(),
   io:format("Created monitor: ~p~n", [Monitor]),

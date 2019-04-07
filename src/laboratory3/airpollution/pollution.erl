@@ -18,7 +18,9 @@ addStation(Name, {Latitude, Longitude}, Monitor)
   when is_record(Monitor, monitor) and is_number(Latitude) and is_number(Longitude) ->
   case (maps:is_key(Name, Monitor#monitor.stationsMap) or maps:is_key({Latitude, Longitude}, Monitor#monitor.stationsMap)) of
     true ->
-      error_logger:error_msg("There is already station with the same name or the same coordinates in the system!");
+      error_logger:error_msg("There is already station with the same name or the same coordinates in the system!
+      RETURNING OLD MONITOR~n"),
+      Monitor;
     false ->
       Station = #station{name = Name, coordinates = {Latitude, Longitude}},
       StationsMap = Monitor#monitor.stationsMap,
@@ -26,7 +28,7 @@ addStation(Name, {Latitude, Longitude}, Monitor)
       #monitor{stationsMap = StationsMap#{Name => Station, {Latitude, Longitude} => Station}, measurementsMap = MeasurementsMap}
   end;
 addStation(_, _, _)
-  -> error_logger:error_msg("Bad arguments! Try again").
+  -> error_logger:error_msg("Bad arguments in addStation method! Try again").
 
 
 addValue(_, _, _, _, #{}) -> error_logger:error_msg("The monitor is empty!");
