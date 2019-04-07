@@ -118,6 +118,14 @@ getDailyMean(Date, Type, Monitor) ->
   countMean(lists:filter(fun(X) -> (X#measurement.type == Type) and (X#measurement.date == Date) end, ListOfValues)).
 
 
+importFromCsv(FileName, Monitor) ->
+  Lines = readLines(FileName),
+  [Name, Coordinates, Date, Type, Value] = string:lexemes(Lines, ";"),
+  CoordinatesTuple = convertStringToTuple(Coordinates),
+  Monitor2 = addStation(Name, CoordinatesTuple, Monitor),
+  addValue(Name, Date, Type, Value, Monitor2).
+
+
 countMean([]) -> 0;
 countMean(List) ->
   countSumOfValues(List) / length(List).
@@ -140,13 +148,6 @@ convertStringToTuple(String) ->
   {ok, ItemTokens, _} = erl_scan:string(String ++ "."),
   {ok, Term} = erl_parse:parse_term(ItemTokens),
   Term.
-
-
-importFromCsv(FileName, Monitor) ->
-  Lines = readLines(FileName),
-  [Name, Coordinates, Date, Type, Value] = string:lexemes(Lines, ";"),
-  CoordinatesTuple = convertStringToTuple(Coordinates),
-  addStation(Name, CoordinatesTuple, Monitor).
 
 
 readLines(FileName) ->

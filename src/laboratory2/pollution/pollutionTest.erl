@@ -3,7 +3,7 @@
 
 %% API
 -export([]).
--export([testWholePollutionModule/0, testErrorDetecting/0, testCreateMonitorMethod/0, testAddStationMethod/0, testAddValueMethod/0, testRemoveValueMethod/0, testGetOneValueMethod/0, testGetStationMeanMethod/0, testGetDailyMeanMethod/0]).
+-export([testWholePollutionModule/0, testErrorDetecting/0, testCreateMonitorMethod/0, testAddStationMethod/0, testAddValueMethod/0, testRemoveValueMethod/0, testGetOneValueMethod/0, testGetStationMeanMethod/0, testGetDailyMeanMethod/0, testImportFromCsvMethod/0]).
 
 
 testCreateMonitorMethod() ->
@@ -99,7 +99,7 @@ testGetOneValueMethod() ->
 
 
 testGetStationMeanMethod() ->
-  io:format("TESTING ADD VALUE METHOD:~n"),
+  io:format("TESTING GET STATION MEAN METHOD:~n"),
   EmptyMonitor = pollution:createMonitor(),
   io:format("Created monitor: ~p~n", [EmptyMonitor]),
 
@@ -122,7 +122,7 @@ testGetStationMeanMethod() ->
 
 
 testGetDailyMeanMethod() ->
-  io:format("TESTING ADD VALUE METHOD:~n"),
+  io:format("TESTING GET DAILY MEAN METHOD:~n"),
   EmptyMonitor = pollution:createMonitor(),
   io:format("Created monitor: ~p~n", [EmptyMonitor]),
 
@@ -145,6 +145,19 @@ testGetDailyMeanMethod() ->
   io:format("Getting station mean for station: Broadway, {100, 200}, for type: PM10 ~n"),
   DailyMean1 = pollution:getDailyMean("8-04-2019", "PM10", ValueMonitor3),
   io:format("Daily mean value of PM10 for station: Broadway, {100, 200} for 8-04-2019: ~p~n~n", [DailyMean1]).
+
+
+
+testImportFromCsvMethod() ->
+  io:format("TESTING IMPORT FROM CSV METHOD:~n"),
+  EmptyMonitor = pollution:createMonitor(),
+  io:format("Created monitor: ~p~n", [EmptyMonitor]),
+
+  io:format("Importing data from csv file (addStation):~n"),
+  FileName = "/home/jakub/IdeaProjects/ErlangLaboratories/src/laboratory2/pollution/data.csv",
+  CsvMonitor = pollution:importFromCsv(FileName, EmptyMonitor),
+  io:format("Actual state of monitor: ~p~n~n", [CsvMonitor]).
+
 
 
 
