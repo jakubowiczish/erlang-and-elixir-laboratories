@@ -3,7 +3,7 @@
 
 %% API
 -export([]).
--export([testWholePollutionModule/0, testErrorDetecting/0, testCreateMonitorMethod/0, testAddStationMethod/0, testAddValueMethod/0, testRemoveValueMethod/0, testGetOneValueMethod/0]).
+-export([testWholePollutionModule/0, testErrorDetecting/0, testCreateMonitorMethod/0, testAddStationMethod/0, testAddValueMethod/0, testRemoveValueMethod/0, testGetOneValueMethod/0, testGetStationMeanMethod/0, testGetDailyMeanMethod/0]).
 
 
 testCreateMonitorMethod() ->
@@ -98,7 +98,53 @@ testGetOneValueMethod() ->
   io:format("Value from monitor: ~p~n~n", [ValueFromMonitor2]).
 
 
+testGetStationMeanMethod() ->
+  io:format("TESTING ADD VALUE METHOD:~n"),
+  EmptyMonitor = pollution:createMonitor(),
+  io:format("Created monitor: ~p~n", [EmptyMonitor]),
 
+  io:format("Adding new station: Broadway, {100, 200} to this empty monitor~n"),
+  BroadwayMonitor = pollution:addStation("Broadway", {100, 200}, EmptyMonitor),
+  io:format("Actual state of monitor: ~p~n~n", [BroadwayMonitor]),
+
+  io:format("Adding new value for station: Broadway, {100, 200} ~n"),
+  ValueMonitor1 = pollution:addValue("Broadway", "7-04-2019", "PM10", 16, BroadwayMonitor),
+  io:format("Actual state of monitor: ~p~n~n", [ValueMonitor1]),
+
+  io:format("Adding new value for station: Broadway, {100, 200} ~n"),
+  ValueMonitor2 = pollution:addValue({100, 200}, "7-04-2019", "PM10", 32, ValueMonitor1),
+  io:format("Actual state of monitor: ~p~n~n", [ValueMonitor2]),
+
+  io:format("Getting station mean for station: Broadway, {100, 200}, for type: PM10 ~n"),
+  StationMean1 = pollution:getStationMean("Broadway", "PM10", ValueMonitor2),
+  io:format("Mean value of PM10 for station: Broadway, {100, 200}: ~p~n~n", [StationMean1]).
+
+
+
+testGetDailyMeanMethod() ->
+  io:format("TESTING ADD VALUE METHOD:~n"),
+  EmptyMonitor = pollution:createMonitor(),
+  io:format("Created monitor: ~p~n", [EmptyMonitor]),
+
+  io:format("Adding new station: Broadway, {100, 200} to this empty monitor~n"),
+  BroadwayMonitor = pollution:addStation("Broadway", {100, 200}, EmptyMonitor),
+  io:format("Actual state of monitor: ~p~n~n", [BroadwayMonitor]),
+
+  io:format("Adding new value for station: Broadway, {100, 200} ~n"),
+  ValueMonitor1 = pollution:addValue("Broadway", "7-04-2019", "PM10", 16, BroadwayMonitor),
+  io:format("Actual state of monitor: ~p~n~n", [ValueMonitor1]),
+
+  io:format("Adding new value for station: Broadway, {100, 200} ~n"),
+  ValueMonitor2 = pollution:addValue({100, 200}, "8-04-2019", "PM10", 32, ValueMonitor1),
+  io:format("Actual state of monitor: ~p~n~n", [ValueMonitor2]),
+
+  io:format("Adding new value for station: Broadway, {100, 200} ~n"),
+  ValueMonitor3 = pollution:addValue({100, 200}, "8-04-2019", "PM10", 58, ValueMonitor2),
+  io:format("Actual state of monitor: ~p~n~n", [ValueMonitor3]),
+
+  io:format("Getting station mean for station: Broadway, {100, 200}, for type: PM10 ~n"),
+  DailyMean1 = pollution:getDailyMean("8-04-2019", "PM10", ValueMonitor3),
+  io:format("Daily mean value of PM10 for station: Broadway, {100, 200} for 8-04-2019: ~p~n~n", [DailyMean1]).
 
 
 
