@@ -6,10 +6,12 @@
 -export([testWholePollutionModule/0, testErrorDetecting/0, testCreateMonitorMethod/0, testAddStationMethod/0, testAddValueMethod/0, testRemoveValueMethod/0, testGetOneValueMethod/0, testGetStationMeanMethod/0, testGetDailyMeanMethod/0, testImportFromCsvMethod/0]).
 
 
+
 testCreateMonitorMethod() ->
   io:format("TESTING CREATE MONITOR METHOD:~n"),
   EmptyMonitor = pollution:createMonitor(),
   io:format("Created monitor: ~p~n", [EmptyMonitor]).
+
 
 
 testAddStationMethod() ->
@@ -32,6 +34,7 @@ testAddStationMethod() ->
   LosAngeles, {100, 200}~n"),
   LosAngelesMonitor = pollution:addStation("LosAngeles", {100, 200}, BroadwayMonitor2),
   io:format("Actual state of monitor: ~p~n~n", [LosAngelesMonitor]).
+
 
 
 testAddValueMethod() ->
@@ -57,6 +60,7 @@ testAddValueMethod() ->
   io:format("Actual state of monitor: ~p~n~n", [ValueMonitor3]).
 
 
+
 testRemoveValueMethod() ->
   io:format("TESTING REMOVE VALUE METHOD:~n"),
   EmptyMonitor = pollution:createMonitor(),
@@ -72,7 +76,13 @@ testRemoveValueMethod() ->
 
   io:format("Removing value from station: Broadway, {100, 200}, 7-04-2019, PM10 ~n"),
   RemoveValueMonitor1 = pollution:removeValue("Broadway", "7-04-2019", "PM10", ValueMonitor1),
-  io:format("Actual state of monitor: ~p~n~n", [RemoveValueMonitor1]).
+  io:format("Actual state of monitor: ~p~n~n", [RemoveValueMonitor1]),
+
+  %% ERROR REPORT EXPECTED
+  io:format("Removing value from station: Broadway, {100, 200}, 7-04-2019, PM2.5 ~n"),
+  RemoveValueMonitor2 = pollution:removeValue("Broadway", "7-04-2019", "PM2.5", RemoveValueMonitor1),
+  io:format("Actual state of monitor: ~p~n~n", [RemoveValueMonitor2]).
+
 
 
 testGetOneValueMethod() ->
@@ -88,14 +98,15 @@ testGetOneValueMethod() ->
   ValueMonitor1 = pollution:addValue("Broadway", "7-04-2019", "PM10", 16, BroadwayMonitor),
   io:format("Actual state of monitor: ~p~n~n", [ValueMonitor1]),
 
-  io:format("Getting one value from station: Broadway, {100, 200} ~n"),
+  io:format("Getting one value from station: Broadway, {100, 200} - date: 7-04-2019, type: PM10 ~n"),
   ValueFromMonitor1 = pollution:getOneValue("Broadway", "7-04-2019", "PM10", ValueMonitor1),
   io:format("Value from monitor: ~p~n~n", [ValueFromMonitor1]),
 
   %% ERROR REPORT EXPECTED - WRONG DATE
-  io:format("Getting one value from station: Broadway, {100, 200} ~n"),
+  io:format("Getting one value from station: Broadway, {100, 200} - date: 20-04-2019, type: PM10 ~n"),
   ValueFromMonitor2 = pollution:getOneValue("Broadway", "20-04-2019", "PM10", ValueMonitor1),
   io:format("Value from monitor: ~p~n~n", [ValueFromMonitor2]).
+
 
 
 testGetStationMeanMethod() ->
@@ -107,16 +118,20 @@ testGetStationMeanMethod() ->
   BroadwayMonitor = pollution:addStation("Broadway", {100, 200}, EmptyMonitor),
   io:format("Actual state of monitor: ~p~n~n", [BroadwayMonitor]),
 
-  io:format("Adding new value for station: Broadway, {100, 200} ~n"),
+  io:format("Adding new value for station: Broadway, {100, 200} - value: 16, type: PM10 ~n"),
   ValueMonitor1 = pollution:addValue("Broadway", "7-04-2019", "PM10", 16, BroadwayMonitor),
   io:format("Actual state of monitor: ~p~n~n", [ValueMonitor1]),
 
-  io:format("Adding new value for station: Broadway, {100, 200} ~n"),
+  io:format("Adding new value for station: Broadway, {100, 200} - value: 32, type: PM10 ~n"),
   ValueMonitor2 = pollution:addValue({100, 200}, "7-04-2019", "PM10", 32, ValueMonitor1),
   io:format("Actual state of monitor: ~p~n~n", [ValueMonitor2]),
 
+  io:format("Adding new value for station: Broadway, {100, 200} - value: 48, type: S02 ~n"),
+  ValueMonitor3 = pollution:addValue({100, 200}, "7-04-2019", "S02", 48, ValueMonitor2),
+  io:format("Actual state of monitor: ~p~n~n", [ValueMonitor3]),
+
   io:format("Getting station mean for station: Broadway, {100, 200}, for type: PM10 ~n"),
-  StationMean1 = pollution:getStationMean("Broadway", "PM10", ValueMonitor2),
+  StationMean1 = pollution:getStationMean("Broadway", "PM10", ValueMonitor3),
   io:format("Mean value of PM10 for station: Broadway, {100, 200}: ~p~n~n", [StationMean1]).
 
 
@@ -130,19 +145,19 @@ testGetDailyMeanMethod() ->
   BroadwayMonitor = pollution:addStation("Broadway", {100, 200}, EmptyMonitor),
   io:format("Actual state of monitor: ~p~n~n", [BroadwayMonitor]),
 
-  io:format("Adding new value for station: Broadway, {100, 200} ~n"),
+  io:format("Adding new value for station: Broadway, {100, 200} - value: 16, type: PM10 ~n"),
   ValueMonitor1 = pollution:addValue("Broadway", "7-04-2019", "PM10", 16, BroadwayMonitor),
   io:format("Actual state of monitor: ~p~n~n", [ValueMonitor1]),
 
-  io:format("Adding new value for station: Broadway, {100, 200} ~n"),
+  io:format("Adding new value for station: Broadway, {100, 200} - value: 32, type: PM10 ~n"),
   ValueMonitor2 = pollution:addValue({100, 200}, "8-04-2019", "PM10", 32, ValueMonitor1),
   io:format("Actual state of monitor: ~p~n~n", [ValueMonitor2]),
 
-  io:format("Adding new value for station: Broadway, {100, 200} ~n"),
+  io:format("Adding new value for station: Broadway, {100, 200} - value: 58, type: PM10 ~n"),
   ValueMonitor3 = pollution:addValue({100, 200}, "8-04-2019", "PM10", 58, ValueMonitor2),
   io:format("Actual state of monitor: ~p~n~n", [ValueMonitor3]),
 
-  io:format("Getting station mean for station: Broadway, {100, 200}, for type: PM10 ~n"),
+  io:format("Getting station mean for station: Broadway, {100, 200}, for type: PM10, for day: 8-04-2019  ~n"),
   DailyMean1 = pollution:getDailyMean("8-04-2019", "PM10", ValueMonitor3),
   io:format("Daily mean value of PM10 for station: Broadway, {100, 200} for 8-04-2019: ~p~n~n", [DailyMean1]).
 
@@ -157,7 +172,6 @@ testImportFromCsvMethod() ->
   FileName = "/home/jakub/IdeaProjects/ErlangLaboratories/src/laboratory2/pollution/data.csv",
   CsvMonitor = pollution:importFromCsv(FileName, EmptyMonitor),
   io:format("Actual state of monitor: ~p~n~n", [CsvMonitor]).
-
 
 
 
@@ -211,7 +225,7 @@ testWholePollutionModule() ->
   io:format("DAILY AVERAGE VALUE for SO2 on 5-03-2019: ~p~n~n", [DailyMean1]),
 
   io:format("Getting some data from csv file:~n"),
-  Monitor10 = pollution:importFromCsv("/home/jakub/IdeaProjects/ErlangLaboratories/src/laboratory3/airpollution/data.csv", Monitor9),
+  Monitor10 = pollution:importFromCsv("/home/jakub/IdeaProjects/ErlangLaboratories/src/laboratory2/pollution/data.csv", Monitor9),
   io:format("Actual state of monitor after parsing from csv file: ~p~n", [Monitor10]).
 
 

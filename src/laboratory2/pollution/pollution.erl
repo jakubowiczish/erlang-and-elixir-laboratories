@@ -3,7 +3,9 @@
 
 %% API
 -export([]).
--export([createMonitor/0, addStation/3, addValue/5, removeValue/4, contains/2, getOneValue/4, getStationMean/3, countMean/1, getDailyMean/3, readLines/1, getAllLinesFromFile/1, importFromCsv/2]).
+-export([createMonitor/0, addStation/3, addValue/5, removeValue/4,
+  contains/2, getOneValue/4, getStationMean/3, countMean/1, getDailyMean/3,
+  readLines/1, getAllLinesFromFile/1, importFromCsv/2]).
 
 -record(station, {name, coordinates}).
 -record(measurement, {date = calendar:local_time(), type, value = 0}).
@@ -12,6 +14,7 @@
 
 createMonitor() ->
   #monitor{}.
+
 
 %% @doc adds new station to the system - returns updated monitor
 addStation(Name, {Latitude, Longitude}, Monitor)
@@ -41,7 +44,9 @@ addValue(StationKey, Date, Type, Value, Monitor) ->
       try maps:get(Station, MeasurementsMap) of
         MeasurementsList ->
           case lists:member(Measurement, MeasurementsList) of
-            true -> error_logger:error_msg("There is already such measurement for station: ~p", [Station]);
+            true ->
+              error_logger:error_msg("There is already such measurement for station: ~p RETURNING OLD MONITOR ~n", [Station]),
+              Monitor;
             false -> #monitor{
               stationsMap = StationsMap,
               measurementsMap = MeasurementsMap#{Station := MeasurementsList ++ [Measurement]}
@@ -52,7 +57,8 @@ addValue(StationKey, Date, Type, Value, Monitor) ->
           #monitor{stationsMap = StationsMap, measurementsMap = maps:put(Station, [Measurement], MeasurementsMap)}
       end
   catch
-    error:_ -> error_logger:error_msg("There is no such station in the system! Try again~n")
+    error:_ -> error_logger:error_msg("There is no such station in the system! Try again, RETURNING OLD MONITOR ~n"),
+      Monitor
   end.
 
 
@@ -67,13 +73,16 @@ removeValue(StationKey, Date, Type, Monitor) ->
           case contains(Measurement, MeasurementsList) of
             {true, _, NewMeasurementsList} ->
               #monitor{stationsMap = StationsMap, measurementsMap = MeasurementsMap#{Station := NewMeasurementsList}};
-            false -> error_logger:error_msg("There is no such measurement")
+            false -> error_logger:error_msg("There is no such measurement, RETURNING OLD MONITOR ~n"),
+              Monitor
           end
       catch
-        error:_ -> error_logger:error_msg("There is no such measurement")
+        error:_ -> error_logger:error_msg("There is no such measurement, RETURNING OLD MONITOR ~n"),
+          Monitor
       end
   catch
-    error:_ -> error_logger:error_msg("There is no such station!")
+    error:_ -> error_logger:error_msg("There is no such station, RETURNING OLD MONITOR ~n"),
+      Monitor
   end.
 
 
