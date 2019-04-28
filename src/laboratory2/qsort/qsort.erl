@@ -9,23 +9,28 @@
 -export([randomElems/3]).
 -export([compareSpeeds/3]).
 
+
 lessThan([], _) ->
   [];
 lessThan(List, Arg) ->
   [X || X <- List, X < Arg].
+
 
 grtEqThan([], _) ->
   [];
 grtEqThan(List, Arg) ->
   [X || X <- List, X >= Arg].
 
+
 qs([]) ->
   [];
 qs([Pivot | Tail]) ->
   qs(lessThan(Tail, Pivot)) ++ [Pivot] ++ qs(grtEqThan(Tail, Pivot)).
 
+
 randomElems(N, Min, Max) ->
   [Min + rand:uniform(Max - Min) || X <- lists:seq(1, N)].
+
 
 compareSpeeds(List, Fun1, Fun2) ->
   {Time1, _} = timer:tc(qsort, Fun1, [List]),
