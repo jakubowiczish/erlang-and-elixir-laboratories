@@ -1,8 +1,17 @@
--module(pollution).
+%%%-------------------------------------------------------------------
+%%% @author jakub
+%%% @copyright (C) 2019, <COMPANY>
+%%% @doc
+%%%
+%%% @end
+%%% Created : 29. Apr 2019 01:39
+%%%-------------------------------------------------------------------
+-module(pollution_server).
 -author("jakub").
 
 %% API
--export([]).
+%%-export([init/0]).
+
 -export([
   createMonitor/0, addStation/3, addValue/5, removeValue/4,
   contains/2, getOneValue/4, getStationMean/3, countMean/1, getDailyMean/3,
@@ -12,6 +21,12 @@
 -record(station, {name, coordinates}).
 -record(measurement, {date = calendar:local_time(), type, value = 0}).
 -record(monitor, {stationsMap = #{}, measurementsMap = #{}}).
+
+
+
+%%init() ->
+%%  Monitor = createMonitor(),
+%%  loop(Monitor).
 
 
 createMonitor() ->
