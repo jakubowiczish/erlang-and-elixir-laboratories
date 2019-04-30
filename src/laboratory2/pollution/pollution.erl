@@ -13,10 +13,18 @@
 -record(measurement, {date = calendar:local_time(), type, value = 0}).
 -record(monitor, {stationsMap = #{}, measurementsMap = #{}}).
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%              METHOD CREATING AND RETURNING EMPTY MONITOR
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 createMonitor() ->
   #monitor{}.
 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%              METHOD ADDING STATION TO THE MONITOR IN ARGUMENT
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 addStation(Name, {Latitude, Longitude}, Monitor)
   when is_record(Monitor, monitor) and is_number(Latitude) and is_number(Longitude) ->
@@ -34,6 +42,11 @@ addStation(Name, {Latitude, Longitude}, Monitor)
 addStation(_, _, _)
   -> error_logger:error_msg("Bad arguments in addStation method! Try again").
 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%              METHOD ADDING VALUE TO SPECIFIC STATION IN GIVEN MONITOR
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 addValue(_, _, _, _, #{}) -> error_logger:error_msg("The monitor is empty!");
 addValue(StationKey, Date, Type, Value, Monitor) ->
@@ -63,6 +76,11 @@ addValue(StationKey, Date, Type, Value, Monitor) ->
   end.
 
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%              METHOD REMOVING VALUE FROM SPECIFIC STATION IN GIVEN MONITOR
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 removeValue(StationKey, Date, Type, Monitor) ->
   StationsMap = Monitor#monitor.stationsMap,
   MeasurementsMap = Monitor#monitor.measurementsMap,
@@ -87,6 +105,12 @@ removeValue(StationKey, Date, Type, Monitor) ->
   end.
 
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%              METHOD RETURNING ONE SPECIFIC VALUE
+%%              FROM SPECIFIED DATE AND PARAMETER TYPE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 getOneValue(StationKey, Date, Type, Monitor) ->
   StationsMap = Monitor#monitor.stationsMap,
   MeasurementsMap = Monitor#monitor.measurementsMap,
@@ -107,6 +131,12 @@ getOneValue(StationKey, Date, Type, Monitor) ->
   end.
 
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%              METHOD RETURNING MEAN VALUE OF
+%%              SPECIFIC PARAMETER FOR SPECIFIC STATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 getStationMean(_, _, {#{}, #{}}) -> error_logger:error_msg("This monitor is empty!");
 getStationMean(StationKey, Type, Monitor) ->
   StationsMap = Monitor#monitor.stationsMap,
@@ -123,10 +153,22 @@ getStationMean(StationKey, Type, Monitor) ->
   end.
 
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%              METHOD RETURNING MEAN VALUE OF
+%%              SPECIFIC PARAMETER FOR SPECIFIC DAY
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 getDailyMean(Date, Type, Monitor) ->
   ListOfValues = lists:flatten(maps:values(Monitor#monitor.measurementsMap)),
   countMean(lists:filter(fun(X) -> (X#measurement.type == Type) and (X#measurement.date == Date) end, ListOfValues)).
 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%              METHOD PARSING DATA FROM FILE AND ADDING IT TO MONITOR
+%%              (DATA - STATION AND SPECIFIC VALUE FOR THIS STATION)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 importFromCsv(FileName, Monitor) ->
   Lines = readLines(FileName),
@@ -137,15 +179,30 @@ importFromCsv(FileName, Monitor) ->
   addValue(Name, Date, Type, Value, Monitor2).
 
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%              HELPING METHOD COUNTING MEAN VALUE FOR VALUES IN GIVEN LIST
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 countMean([]) -> 0;
 countMean(List) ->
   countSumOfValues(List) / length(List).
 
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%              HELPING METHOD COUNTING SUM OF VALUES FOR VALUES IN GIVEN LIST
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 countSumOfValues([]) -> 0;
 countSumOfValues([H | T]) ->
   H#measurement.value + countSumOfValues(T).
 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%              HELPING METHOD COUNTING SUM OF VALUES FOR VALUES IN GIVEN LIST
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 contains(_, []) -> false;
 contains(Measurement, [Head | Tail]) ->
@@ -155,11 +212,20 @@ contains(Measurement, [Head | Tail]) ->
   end.
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%              HELPING METHOD CONVERTING STRING TO TUPLE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 convertStringToTuple(String) ->
   {ok, ItemTokens, _} = erl_scan:string(String ++ "."),
   {ok, Term} = erl_parse:parse_term(ItemTokens),
   Term.
 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%              HELPING METHOD READING LINES FROM GIVEN FILE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 readLines(FileName) ->
   {ok, Data} = file:open(FileName, [read]),
@@ -167,6 +233,11 @@ readLines(FileName) ->
   after file:close(Data)
   end.
 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%              HELPING METHOD GETTING ALL LINES FROM GIVEN FILES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 getAllLinesFromFile(Data) ->
   case io:get_line(Data, "") of

@@ -14,13 +14,14 @@ start() ->
   case (lists:member(ping, registered())) or (lists:member(pong, registered())) of
     true -> error_logger:error_msg("The process is ALREADY RUNNING ~n");
     false ->
-      PingPid = spawn(fun() -> initialize() end),
-      PongPid = spawn(fun() -> initialize() end),
+      PingPid = spawn(fun() -> init() end),
+      PongPid = spawn(fun() -> init() end),
       register(ping, PingPid),
       register(pong, PongPid),
       ping ! pong,
       pong ! ping
   end.
+
 
 
 stop() ->
@@ -32,8 +33,10 @@ stop() ->
   end.
 
 
+
 play(N) ->
   pong ! {self(), play, N}.
+
 
 
 loop(Pid) ->
@@ -55,7 +58,8 @@ loop(Pid) ->
   end.
 
 
-initialize() ->
+
+init() ->
   receive
     To -> loop(To)
   after 20000 ->
