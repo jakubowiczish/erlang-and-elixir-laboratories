@@ -12,7 +12,9 @@
   testRemoveValueMethod/0,
   testGetOneValueMethod/0,
   testGetStationMeanMethod/0,
-  testGetDailyMeanMethod/0, testImportFromCsvMethod/0]).
+  testGetDailyMeanMethod/0,
+  testImportFromCsvMethod/0
+]).
 
 
 runAllTests() ->
@@ -24,7 +26,6 @@ runAllTests() ->
   testGetStationMeanMethod(),
   testGetDailyMeanMethod(),
   testImportFromCsvMethod().
-
 
 
 
