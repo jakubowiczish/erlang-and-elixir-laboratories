@@ -1,9 +1,32 @@
--module(pollutionTest).
+-module(pollutionUsageTests).
 -author("jakub").
 
 %% API
 -export([]).
--export([testWholePollutionModule/0, testErrorDetecting/0, testCreateMonitorMethod/0, testAddStationMethod/0, testAddValueMethod/0, testRemoveValueMethod/0, testGetOneValueMethod/0, testGetStationMeanMethod/0, testGetDailyMeanMethod/0, testImportFromCsvMethod/0]).
+-export([
+  testWholePollutionModule/0,
+  testErrorDetecting/0,
+  testCreateMonitorMethod/0,
+  testAddStationMethod/0,
+  testAddValueMethod/0,
+  testRemoveValueMethod/0,
+  testGetOneValueMethod/0,
+  testGetStationMeanMethod/0,
+  testGetDailyMeanMethod/0,
+  testImportFromCsvMethod/0,
+  runAllTestingMethods/0
+]).
+
+
+runAllTestingMethods() ->
+  testCreateMonitorMethod(),
+  testAddStationMethod(),
+  testAddValueMethod(),
+  testRemoveValueMethod(),
+  testGetOneValueMethod(),
+  testGetStationMeanMethod(),
+  testGetDailyMeanMethod(),
+  testImportFromCsvMethod().
 
 
 

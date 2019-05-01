@@ -3,15 +3,26 @@
 
 %% API
 -export([]).
+
 -export([
-  createMonitor/0, addStation/3, addValue/5, removeValue/4,
-  contains/2, getOneValue/4, getStationMean/3, countMean/1, getDailyMean/3,
+  createMonitor/0,
+  addStation/3,
+  addValue/5,
+  removeValue/4,
+  contains/2,
+  getOneValue/4,
+  getStationMean/3,
+  countMean/1,
+  getDailyMean/3,
   importFromCsv/2
 ]).
 
 -record(station, {name, coordinates}).
+
 -record(measurement, {date = calendar:local_time(), type, value = 0}).
+
 -record(monitor, {stationsMap = #{}, measurementsMap = #{}}).
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%              METHOD CREATING AND RETURNING EMPTY MONITOR
@@ -19,7 +30,6 @@
 
 createMonitor() ->
   #monitor{}.
-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -41,7 +51,6 @@ addStation(Name, {Latitude, Longitude}, Monitor)
   end;
 addStation(_, _, _)
   -> error_logger:error_msg("Bad arguments in addStation method! Try again").
-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -76,7 +85,6 @@ addValue(StationKey, Date, Type, Value, Monitor) ->
   end.
 
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%              METHOD REMOVING VALUE FROM SPECIFIC STATION IN GIVEN MONITOR
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -105,7 +113,6 @@ removeValue(StationKey, Date, Type, Monitor) ->
   end.
 
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%              METHOD RETURNING ONE SPECIFIC VALUE
 %%              FROM SPECIFIED DATE AND PARAMETER TYPE
@@ -131,7 +138,6 @@ getOneValue(StationKey, Date, Type, Monitor) ->
   end.
 
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%              METHOD RETURNING MEAN VALUE OF
 %%              SPECIFIC PARAMETER FOR SPECIFIC STATION
@@ -153,7 +159,6 @@ getStationMean(StationKey, Type, Monitor) ->
   end.
 
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%              METHOD RETURNING MEAN VALUE OF
 %%              SPECIFIC PARAMETER FOR SPECIFIC DAY
@@ -162,7 +167,6 @@ getStationMean(StationKey, Type, Monitor) ->
 getDailyMean(Date, Type, Monitor) ->
   ListOfValues = lists:flatten(maps:values(Monitor#monitor.measurementsMap)),
   countMean(lists:filter(fun(X) -> (X#measurement.type == Type) and (X#measurement.date == Date) end, ListOfValues)).
-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -179,7 +183,6 @@ importFromCsv(FileName, Monitor) ->
   addValue(Name, Date, Type, Value, Monitor2).
 
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%              HELPING METHOD COUNTING MEAN VALUE FOR VALUES IN GIVEN LIST
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -189,7 +192,6 @@ countMean(List) ->
   countSumOfValues(List) / length(List).
 
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%              HELPING METHOD COUNTING SUM OF VALUES FOR VALUES IN GIVEN LIST
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -197,7 +199,6 @@ countMean(List) ->
 countSumOfValues([]) -> 0;
 countSumOfValues([H | T]) ->
   H#measurement.value + countSumOfValues(T).
-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -222,7 +223,6 @@ convertStringToTuple(String) ->
   Term.
 
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%              HELPING METHOD READING LINES FROM GIVEN FILE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -232,7 +232,6 @@ readLines(FileName) ->
   try getAllLinesFromFile(Data)
   after file:close(Data)
   end.
-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
