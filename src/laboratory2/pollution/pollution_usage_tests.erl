@@ -1,4 +1,4 @@
--module(pollutionUsageTests).
+-module(pollution_usage_tests).
 -author("jakub").
 
 %% API
