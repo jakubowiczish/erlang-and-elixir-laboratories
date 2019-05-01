@@ -12,7 +12,7 @@
   testRemoveValueMethod/0,
   testGetOneValueMethod/0,
   testGetStationMeanMethod/0,
-  testGetDailyMeanMethod/0]).
+  testGetDailyMeanMethod/0, testImportFromCsvMethod/0]).
 
 
 runAllTests() ->
@@ -22,9 +22,8 @@ runAllTests() ->
   testRemoveValueMethod(),
   testGetOneValueMethod(),
   testGetStationMeanMethod(),
-  testGetDailyMeanMethod().
-
-
+  testGetDailyMeanMethod(),
+  testImportFromCsvMethod().
 
 
 
@@ -61,6 +60,7 @@ testAddValueMethod() ->
   ?assertEqual(ExpectedMonitor, ActualMonitor).
 
 
+
 testRemoveValueMethod() ->
   EmptyMonitor = pollution:createMonitor(),
   BroadwayMonitor = pollution:addStation("Broadway", {100, 200}, EmptyMonitor),
@@ -86,6 +86,7 @@ testGetOneValueMethod() ->
   ?assertEqual(16, ActualValue).
 
 
+
 testGetStationMeanMethod() ->
   EmptyMonitor = pollution:createMonitor(),
   BroadwayMonitor = pollution:addStation("Broadway", {100, 200}, EmptyMonitor),
@@ -98,6 +99,7 @@ testGetStationMeanMethod() ->
   ActualValue = pollution:getStationMean("Broadway", "PM10", MonitorWithValue3),
 
   ?assertEqual(24.0, ActualValue).
+
 
 
 testGetDailyMeanMethod() ->
@@ -115,6 +117,14 @@ testGetDailyMeanMethod() ->
 
 
 
+testImportFromCsvMethod() ->
+  EmptyMonitor = pollution:createMonitor(),
+  FileName = "/home/jakub/IdeaProjects/ErlangLaboratories/src/laboratory2/pollution/data.csv",
+  CsvMonitor = pollution:importFromCsv(FileName, EmptyMonitor),
 
+  ExpectedMonitor = {monitor, #{{365, 366} => {station, "NewYork", {365, 366}},
+    "NewYork" => {station, "NewYork", {365, 366}}},
+    #{{station, "NewYork", {365, 366}} =>[{measurement, "6-03-2019", "PM10", 20}]}},
 
+  ?assertEqual(ExpectedMonitor, CsvMonitor).
 
