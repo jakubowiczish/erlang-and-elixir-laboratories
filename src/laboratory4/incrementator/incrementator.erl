@@ -3,48 +3,43 @@
 
 %% API
 -export([start_link/0, increment/1, get/1, close/1, init/1]).
--export([handle_cast/2, handle_call/3, terminate/2]).
+-export([handle_cast/2, handle_call/3, terminate/2, handle_info/2]).
 -export([test_incrementator_module/0]).
 
 %% START %%
 
-start_link() ->
-  gen_server:start_link(?MODULE, 0, []).
+start_link() -> gen_server:start_link(?MODULE, 0, []).
 
 
 %% CLIENT -> SERVER INTERFACE %%
 
-increment(Pid) ->
-  gen_server:cast(Pid, inc).
+increment(Pid) -> gen_server:cast(Pid, inc).
 
+get(Pid) -> gen_server:call(Pid, get).
 
-get(Pid) ->
-  gen_server:call(Pid, get).
+close(Pid) -> gen_server:call(Pid, terminate).
 
-
-close(Pid) ->
-  gen_server:call(Pid, terminate).
-
-
-init(N) ->
-  {ok, N}.
+init(N) -> {ok, N}.
 
 
 %% MESSAGES HANDLING %%
 
-handle_cast(inc, N) ->
-  {noreply, N + 1}.
+handle_cast(inc, N) -> {noreply, N + 1}.
+
+handle_call(get, _From, N) -> {reply, N, N};
+handle_call(terminate, _From, N) -> {stop, normal, ok, N}.
+
+%% MISSING METHOD %%
+%% handle_info %%
 
 
-handle_call(get, _From, N) ->
-  {reply, N, N};
-handle_call(terminate, _From, N) ->
-  {stop, normal, ok, N}.
+handle_info(Message, N) ->
+  io:format("Server received following message: ~p~n", [Message]),
+  {noreply, N}.
 
+%%%%
 
-terminate(normal, N) ->
-  io:format("The number is ~B~nBye bye!~n~n", [N]),
-  ok.
+terminate(normal, N) -> io:format("The number is ~B~nBye bye!~n~n", [N]), ok.
 
 
 %% TESTING METHOD %%
