@@ -5,8 +5,8 @@
 -export([
   start/0,
   stop/0,
-  init/0
-]).
+  init/0,
+  crash/0]).
 
 -export([
   addStation/2,
@@ -77,7 +77,11 @@ loop(Monitor) ->
       loop(ResultMonitor);
 
     {request, Pid, stop} ->
-      Pid ! {reply, server_stopped}
+      Pid ! {reply, server_stopped};
+
+    {request, crash} ->
+      1 / 0
+
   end.
 
 
@@ -96,6 +100,10 @@ call(Command, Args) ->
       end
   end.
 
+
+
+crash() ->
+  pollutionServer ! {request, crash}.
 
 
 addStation(Name, {Latitude, Longitude}) ->
