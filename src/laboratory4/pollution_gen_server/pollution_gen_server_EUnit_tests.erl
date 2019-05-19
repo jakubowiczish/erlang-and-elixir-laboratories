@@ -9,9 +9,11 @@
   testAddStationGenServerMethod/0,
   testAddValueGenServerMethod/0,
   testRemoveValueGenServerMethod/0,
-  testGetOneValueGenServerMethod/0, testGetStationMeanGenServerMethod/0, testGetDailyMeanGenServerMethod/0, testImportFromCsvGenServerMethod/0]).
-
-
+  testGetOneValueGenServerMethod/0,
+  testGetStationMeanGenServerMethod/0,
+  testGetDailyMeanGenServerMethod/0,
+  testImportFromCsvGenServerMethod/0
+]).
 
 
 testAddStationGenServerMethod() ->
