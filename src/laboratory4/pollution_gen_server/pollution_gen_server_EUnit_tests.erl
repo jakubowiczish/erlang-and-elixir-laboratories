@@ -29,7 +29,6 @@ testAddStationGenServerMethod() ->
   pollution_gen_server:stop().
 
 
-
 testAddValueGenServerMethod() ->
   pollution_gen_server:start(pollution:createMonitor()),
 
@@ -45,7 +44,6 @@ testAddValueGenServerMethod() ->
   ?assertEqual(ExpectedResult, ActualResult),
 
   pollution_gen_server:stop().
-
 
 
 testRemoveValueGenServerMethod() ->
@@ -72,7 +70,6 @@ testRemoveValueGenServerMethod() ->
   pollution_gen_server:stop().
 
 
-
 testGetOneValueGenServerMethod() ->
   pollution_gen_server:start(pollution:createMonitor()),
 
@@ -85,7 +82,6 @@ testGetOneValueGenServerMethod() ->
   ?assertEqual(16, ActualResult),
 
   pollution_gen_server:stop().
-
 
 
 testGetStationMeanGenServerMethod() ->
@@ -118,7 +114,6 @@ testGetDailyMeanGenServerMethod() ->
   ?assertEqual(32.0, ActualResult),
 
   pollution_gen_server:stop().
-
 
 
 testImportFromCsvGenServerMethod() ->

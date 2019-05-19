@@ -4,9 +4,24 @@
 %% API
 -behavior(gen_server).
 
--export([init/1, handle_call/3, start/1, stop/0, handle_cast/2]).
+-export([
+  init/1,
+  handle_call/3,
+  start/1,
+  stop/0,
+  handle_cast/2
+]).
 
--export([addStation/2, addValue/4, removeValue/3, getOneValue/3, getStationMean/2, getDailyMean/2, importFromCsv/1]).
+-export([
+  addStation/2,
+  addValue/4,
+  removeValue/3,
+  getOneValue/3,
+  getStationMean/2,
+  getDailyMean/2,
+  importFromCsv/1,
+  crash/0
+]).
 
 
 start(State) ->
@@ -108,5 +123,5 @@ handle_cast(stop, Monitor) ->
 
 
 handle_cast(crash, Monitor) ->
-  C = 1 / 0,
+  1 / 0,
   {noreply, Monitor}.
