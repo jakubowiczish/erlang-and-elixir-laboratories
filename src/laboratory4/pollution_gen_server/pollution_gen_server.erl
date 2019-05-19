@@ -20,7 +20,11 @@ init(Monitor) ->
 stop() ->
   gen_server:cast(?MODULE, stop).
 
-%% M
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                              POLLUTION METHODS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 addStation(Name, {Latitude, Longitude}) ->
   gen_server:call(?MODULE, {addStation, Name, {Latitude, Longitude}}).
@@ -31,7 +35,7 @@ addValue(StationKey, Date, Type, Value) ->
 
 
 removeValue(StationKey, Date, Type) ->
-  gen_server:cast(?MODULE, {removeValue, StationKey, Date, Type}).
+  gen_server:call(?MODULE, {removeValue, StationKey, Date, Type}).
 
 
 getOneValue(StationKey, Date, Type) ->
@@ -50,9 +54,13 @@ importFromCsv(FileName) ->
   gen_server:call(?MODULE, {importFromCsv, FileName}).
 
 
+crash() ->
+  gen_server:cast(?MODULE, crash).
 
 
-%% HANDLERS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                              CALL HANDLERS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 handle_call({addStation, Name, {Latitude, Longitude}}, _From, Monitor) ->
@@ -62,16 +70,43 @@ handle_call({addStation, Name, {Latitude, Longitude}}, _From, Monitor) ->
 
 handle_call({addValue, StationKey, Date, Type, Value}, _From, Monitor) ->
   Result = pollution:addValue(StationKey, Date, Type, Value, Monitor),
+  {reply, Result, Result};
+
+
+handle_call({removeValue, StationKey, Date, Type}, _From, Monitor) ->
+  Result = pollution:removeValue(StationKey, Date, Type, Monitor),
+  {reply, Result, Result};
+
+
+handle_call({getOneValue, StationKey, Date, Type}, _From, Monitor) ->
+  Result = pollution:getOneValue(StationKey, Date, Type, Monitor),
+  {reply, Result, Monitor};
+
+
+handle_call({getStationMean, StationKey, Type}, _From, Monitor) ->
+  Result = pollution:getStationMean(StationKey, Type, Monitor),
+  {reply, Result, Monitor};
+
+
+handle_call({getDailyMean, Date, Type}, _From, Monitor) ->
+  Result = pollution:getDailyMean(Date, Type, Monitor),
+  {reply, Result, Monitor};
+
+
+handle_call({importFromCsv, Filename}, _From, Monitor) ->
+  Result = pollution:importFromCsv(Filename, Monitor),
   {reply, Result, Result}.
 
 
-
-handle_cast(stop, M) ->
-  {stop, normal, M}.
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                              CAST HANDLERS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-crash() ->
-  gen_server:cast(?MODULE, crash).
+handle_cast(stop, Monitor) ->
+  {stop, normal, Monitor};
 
+
+handle_cast(crash, Monitor) ->
+  C = 1 / 0,
+  {noreply, Monitor}.

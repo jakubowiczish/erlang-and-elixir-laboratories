@@ -4,7 +4,20 @@
 %% API
 -include_lib("eunit/include/eunit.hrl").
 
--export([testAddStationGenServerMethod/0, testAddValueGenServerMethod/0]).
+
+-export([
+  testAllGenServerMethods/0,
+  testAddStationGenServerMethod/0,
+  testAddValueGenServerMethod/0,
+  testRemoveValueGenServerMethod/0
+]).
+
+
+
+testAllGenServerMethods() ->
+  testAddStationGenServerMethod(),
+  testAddValueGenServerMethod(),
+  testRemoveValueGenServerMethod().
 
 
 
@@ -38,5 +51,32 @@ testAddValueGenServerMethod() ->
 
   pollution_gen_server:stop().
 
+
+
+testRemoveValueGenServerMethod() ->
+  pollution_gen_server:start(pollution:createMonitor()),
+
+  pollution_gen_server:addStation("Broadway", {100, 200}),
+
+  ActualResult = pollution_gen_server:addValue("Broadway", "7-04-2019", "PM10", 16),
+
+  ExpectedResult = {monitor, #{{100, 200} => {station, "Broadway", {100, 200}},
+    "Broadway" => {station, "Broadway", {100, 200}}},
+    #{{station, "Broadway", {100, 200}} =>
+    [{measurement, "7-04-2019", "PM10", 16}]}},
+
+  ?assertEqual(ExpectedResult, ActualResult),
+
+  ActualResult2 = pollution_gen_server:removeValue("Broadway", "7-04-2019", "PM10"),
+
+  ExpectedResult2 = {monitor, #{{100, 200} =>
+  {station, "Broadway", {100, 200}},
+    "Broadway" =>
+    {station, "Broadway", {100, 200}}},
+    #{{station, "Broadway", {100, 200}} => []}},
+
+  ?assertEqual(ExpectedResult2, ActualResult2),
+
+  pollution_gen_server:stop().
 
 
