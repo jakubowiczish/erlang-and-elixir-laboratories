@@ -47,7 +47,7 @@ testAddValueGenServerMethod() ->
 
 
 testRemoveValueGenServerMethod() ->
-  pollution_gen_server:start(pollution:createMonitor()),
+  pollution_server_supervisor:start(),
 
   pollution_gen_server:addStation("Broadway", {100, 200}),
 
@@ -71,7 +71,7 @@ testRemoveValueGenServerMethod() ->
 
 
 testGetOneValueGenServerMethod() ->
-  pollution_gen_server:start(pollution:createMonitor()),
+  pollution_server_supervisor:start(),
 
   pollution_gen_server:addStation("Broadway", {100, 200}),
 
@@ -85,7 +85,7 @@ testGetOneValueGenServerMethod() ->
 
 
 testGetStationMeanGenServerMethod() ->
-  pollution_gen_server:start(pollution:createMonitor()),
+  pollution_server_supervisor:start(),
 
   pollution_gen_server:addStation("Broadway", {100, 200}),
 
@@ -101,7 +101,7 @@ testGetStationMeanGenServerMethod() ->
 
 
 testGetDailyMeanGenServerMethod() ->
-  pollution_gen_server:start(pollution:createMonitor()),
+  pollution_server_supervisor:start(),
 
   pollution_gen_server:addStation("Broadway", {100, 200}),
 
@@ -117,7 +117,7 @@ testGetDailyMeanGenServerMethod() ->
 
 
 testImportFromCsvGenServerMethod() ->
-  pollution_gen_server:start(pollution:createMonitor()),
+  pollution_server_supervisor:start(),
 
   ActualResult = pollution_gen_server:importFromCsv("/home/jakub/IdeaProjects/ErlangLaboratories/src/laboratory4/pollution_gen_server/data.csv"),
 
