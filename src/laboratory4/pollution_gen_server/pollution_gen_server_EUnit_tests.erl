@@ -17,19 +17,20 @@
 
 
 testAddStationGenServerMethod() ->
-  pollution_server_supervisor:start(),
+  pollution_gen_server:start(pollution:createMonitor()),
 
   ActualResult = pollution_gen_server:addStation("Broadway", {100, 200}),
 
   ExpectedResult = {monitor, #{{100, 200} =>{station, "Broadway", {100, 200}},
     "Broadway" =>{station, "Broadway", {100, 200}}}, #{}},
 
-  ?assertEqual(ExpectedResult, ActualResult).
-%%  pollution_gen_server:stop().
+  ?assertEqual(ExpectedResult, ActualResult),
+
+  pollution_gen_server:stop().
 
 
 testAddValueGenServerMethod() ->
-  pollution_server_supervisor:start(),
+  pollution_gen_server:start(pollution:createMonitor()),
 
   pollution_gen_server:addStation("Broadway", {100, 200}),
 
