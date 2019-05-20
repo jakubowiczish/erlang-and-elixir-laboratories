@@ -17,7 +17,7 @@
 
 
 testAddStationGenServerMethod() ->
-  pollution_gen_server:start(pollution:createMonitor()),
+  pollution_server_supervisor:start(),
 
   ActualResult = pollution_gen_server:addStation("Broadway", {100, 200}),
 
@@ -30,7 +30,7 @@ testAddStationGenServerMethod() ->
 
 
 testAddValueGenServerMethod() ->
-  pollution_gen_server:start(pollution:createMonitor()),
+  pollution_server_supervisor:start(),
 
   pollution_gen_server:addStation("Broadway", {100, 200}),
 

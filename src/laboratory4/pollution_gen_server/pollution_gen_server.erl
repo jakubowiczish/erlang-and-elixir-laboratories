@@ -38,7 +38,7 @@ stop() ->
 
 
 terminate(normal, Monitor) ->
-  io:format("Final state of the monitor:~n~w~n", [Monitor]).
+  io:format("Final state of the monitor:~n~p~n", [Monitor]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%                              POLLUTION METHODS
