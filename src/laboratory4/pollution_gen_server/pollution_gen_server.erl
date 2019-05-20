@@ -20,11 +20,12 @@
   getStationMean/2,
   getDailyMean/2,
   importFromCsv/1,
-  crash/0
-]).
+  crash/0,
+  terminate/2]).
 
 
-start(State) ->
+start(InitMonitor) ->
+  [{lastState, State}] = ets:lookup(monitorKeeper, lastState),
   gen_server:start_link({local, ?MODULE}, ?MODULE, State, []).
 
 
@@ -35,6 +36,9 @@ init(Monitor) ->
 stop() ->
   gen_server:cast(?MODULE, stop).
 
+
+terminate(normal, Monitor) ->
+  io:format("Final state of the monitor:~n~w~n", [Monitor]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%                              POLLUTION METHODS
@@ -123,5 +127,6 @@ handle_cast(stop, Monitor) ->
 
 
 handle_cast(crash, Monitor) ->
+  ets:insert(monitorKeeper, [{lastState, Monitor}]),
   1 / 0,
   {noreply, Monitor}.
