@@ -25,6 +25,7 @@
 
 
 start(State) ->
+  [{lastState, State}] = ets:lookup(monitor_guardian, last_state),
   gen_server:start_link({local, ?MODULE}, ?MODULE, State, []).
 
 

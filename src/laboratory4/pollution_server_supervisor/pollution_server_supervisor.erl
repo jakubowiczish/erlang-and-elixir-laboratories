@@ -5,13 +5,24 @@
 
 %% API
 
--export([start_link/1, init/1]).
+-export([
+  start/0,
+  start_link/1,
+  init/1
+]).
 
+
+start() ->
+  ets:new(monitor_guardian, [set, public, named_table]),
+  Monitor = pollution:createMonitor(),
+  ets:insert(monitor_guardian, [{last_state, Monitor}]),
+  start_link(Monitor).
 
 
 
 start_link(InitMonitor) ->
   supervisor:start_link({local, pollution_gen_server_supervisor}, ?MODULE, InitMonitor).
+
 
 
 init(InitMonitor) ->
@@ -22,8 +33,3 @@ init(InitMonitor) ->
       permanent, brutal_kill, worker, [pollution_gen_server]}
     ]}
   }.
-
-
-
-
-

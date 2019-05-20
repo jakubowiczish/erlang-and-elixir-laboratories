@@ -6,6 +6,6 @@
 
 
 testPollutionGenServerSupervisor() ->
-  M = pollution_server_supervisor:start_link(pollution:createMonitor()),
+  pollution_server_supervisor:start().
 
-  pollution_gen_server:start(M).
+%%  pollution_gen_server:start(M).
