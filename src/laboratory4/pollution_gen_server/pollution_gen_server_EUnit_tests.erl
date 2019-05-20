@@ -21,7 +21,7 @@ testAddStationGenServerMethod() ->
 
   ActualResult = pollution_gen_server:addStation("Broadway", {100, 200}),
 
-  io:format("Actual monitor state: ~n~p~n~n", [ActualResult]),
+  io:format("Actual state of monitor: ~n~p~n~n", [ActualResult]), %% PRINT JUST TO BE SURE
 
   ExpectedResult = {monitor, #{{100, 200} =>{station, "Broadway", {100, 200}},
     "Broadway" =>{station, "Broadway", {100, 200}}}, #{}},

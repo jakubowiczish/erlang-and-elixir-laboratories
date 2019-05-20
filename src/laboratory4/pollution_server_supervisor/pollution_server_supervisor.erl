@@ -5,6 +5,7 @@
 
 %% API
 
+
 -export([start/0, init/1]).
 
 
@@ -16,7 +17,6 @@ start() ->
 
 
 
-
 init(InitialMonitor) ->
   {ok,
     {{one_for_one, 3, 5},
@@ -24,8 +24,5 @@ init(InitialMonitor) ->
         {pollution_gen_server, start, [InitialMonitor]},
         permanent, brutal_kill, worker, [pollution_gen_server]}]
     }}.
-
-
-
 
 
