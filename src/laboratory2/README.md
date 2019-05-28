@@ -1,3 +1,5 @@
+# Laboratorium nr 2 - programowanie funkcyjne w Erlangu
+
 ## Przebieg zajęć
 
 Na dzisiejszych zajęciach poznamy funkcyjne sposoby rozwiązywania problemów w Erlangu. 

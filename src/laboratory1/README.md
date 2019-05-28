@@ -1,3 +1,5 @@
+# Laboratorium nr 1 - podstawy języka Erlang
+
 ## Uruchom program Eshell
 - Przetestuj działanie podstawowych elementów składni:
 - Wyrażenia arytmetyczne na liczbach całkowitych i zmiennoprzecinkowych

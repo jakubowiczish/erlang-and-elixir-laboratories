@@ -1,3 +1,5 @@
+# Laboratorium nr 3 - programowanie procesów w Erlangu
+
 ## Rozgrzewka
 
 ```erlang
